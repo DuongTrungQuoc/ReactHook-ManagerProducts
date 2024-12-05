@@ -1,8 +1,23 @@
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
+import { deleleProduct } from '../../services/productService';
+
 
 function DeleteProduct(props) {
   const { item, onReload } = props;
+
+  const deleteItem = async () => {
+    const result = await deleleProduct(item.id);
+    if (result) {
+      onReload();
+      Swal.fire({
+        title: "Đã xóa!",
+        text: "Bạn đã xóa thành công.",
+        icon: "success"
+      });
+    }
+
+  }
 
   const handleDelete = () => {
     //console.log(item.id);
@@ -18,21 +33,7 @@ function DeleteProduct(props) {
       cancelButtonText: "Hủy"
     }).then((result) => {
       if (result.isConfirmed) {
-
-        fetch(`http://localhost:3000/products/${item.id}`, {
-          method: "DELETE"
-        })
-          .then(res => res.json())
-          .then(() => {
-
-            onReload();
-            Swal.fire({
-              title: "Đã xóa!",
-              text: "Bạn đã xóa thành công.",
-              icon: "success"
-            });
-
-          })
+        deleteItem();
       }
     });
   }

@@ -11,6 +11,7 @@ function ProductList(props) {
   const handleReload = () => {
     setEditReload(!editReload);
   }
+
   useEffect(() => {
     const fetchApi = async () => {
       const result = await getProductList();

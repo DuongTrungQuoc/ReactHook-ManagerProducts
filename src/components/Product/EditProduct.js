@@ -2,6 +2,9 @@ import Modal from 'react-modal';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
+import { getListCategory } from '../../services/categoryService';
+import { editProduct } from '../../services/productService';
+
 
 function EditProduct(props) {
   const { item, onReload } = props;
@@ -11,12 +14,8 @@ function EditProduct(props) {
 
   useEffect(() => {
     const fetchApi = async () => {
-      fetch("http://localhost:3000/category")
-        .then(res => res.json())
-        .then(data => {
-          // console.log(data);
-          setDataCategory(data);
-        })
+      const result = await getListCategory();
+      setDataCategory(result);
     }
     fetchApi();
   }, []);
@@ -51,30 +50,21 @@ function EditProduct(props) {
     setShowModal(false);
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    fetch(`http://localhost:3000/products/${item.id}`, {
-      method: "PATCH",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data) {
-          setShowModal(false);
-          onReload();
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Cập nhật sản phẩm thành công",
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
-      })
+    const result = await editProduct(item.id, data);
+
+    if (result) {
+      setShowModal(false);
+      onReload();
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Cập nhật sản phẩm thành công",
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
 
   }
   // console.log(dataCategory);

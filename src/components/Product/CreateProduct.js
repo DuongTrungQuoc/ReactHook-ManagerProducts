@@ -2,6 +2,9 @@ import Modal from 'react-modal';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
+import { getListCategory } from '../../services/categoryService';
+import { createProduct } from '../../services/productService';
+
 
 function CreateProduct(props) {
   const { onReload } = props;
@@ -11,12 +14,8 @@ function CreateProduct(props) {
 
   useEffect(() => {
     const fetchApi = async () => {
-      fetch("http://localhost:3000/category")
-        .then(res => res.json())
-        .then(data => {
-          // console.log(data);
-          setDataCategory(data);
-        })
+      const result = await getListCategory();
+      setDataCategory(result);
     }
     fetchApi();
   }, []);
@@ -50,36 +49,26 @@ function CreateProduct(props) {
     setShowModal(false);
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    fetch("http://localhost:3000/products", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data) {
-          setShowModal(false);
-          onReload();
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Tạo mới sản phẩm thành công",
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
-      })
+    const result = await createProduct(data);
+    if (result) {
+      setShowModal(false);
+      onReload();
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Tạo mới sản phẩm thành công",
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+  };
 
-  }
   // console.log(dataCategory);
   return (
     <>
-      <button onClick={openModal}>Tạo sản phẩm mới</button>
+      <button onClick={openModal} >Tạo sản phẩm mới</button>
 
       <Modal
         isOpen={showModal}
