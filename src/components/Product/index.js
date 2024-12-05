@@ -11,7 +11,7 @@ function Product() {
   }
   return (
     <>
-      <h2>Danh sách sản phẩm</h2>
+      <h2 className="page__title">Danh sách sản phẩm</h2>
       <CreateProduct onReload={handleReload} />
       <ProductList reload={reload} />
     </>
